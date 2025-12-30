@@ -31,7 +31,7 @@ export function TaskCard({ task, onEdit, onDelete, onComplete }: Props) {
     return (
         <div
             className={`relative flex flex-col justify-between
-        h-[210px] rounded-2xl p-5
+        h-52.5 rounded-2xl p-5
         transition-all duration-200
         hover:-translate-y-1 hover:shadow-lg
         border

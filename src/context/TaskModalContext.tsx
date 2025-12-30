@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 interface TaskModalContextType {
-    isOpen: boolean;
-    openModal: () => void;
+    isOpen: string;
+    openModal: (data: string) => void;
     closeModal: () => void;
-    openCreateTask: () => void;
 }
 
 const TaskModalContext = createContext<TaskModalContextType | undefined>(undefined);
@@ -22,25 +21,20 @@ interface TaskModalProviderProps {
 }
 
 export const TaskModalProvider: React.FC<TaskModalProviderProps> = ({ children }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState<string>("");
 
-    const openModal = useCallback(() => {
-        setIsOpen(true);
+    const openModal = useCallback((data: string) => {
+        setIsOpen(data);
     }, []);
 
     const closeModal = useCallback(() => {
-        setIsOpen(false);
-    }, []);
-
-    const openCreateTask = useCallback(() => {
-        setIsOpen(true);
+        setIsOpen("");
     }, []);
 
     const value = {
         isOpen,
         openModal,
         closeModal,
-        openCreateTask,
     };
 
     return (

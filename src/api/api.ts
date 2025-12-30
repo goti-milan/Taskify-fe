@@ -11,7 +11,7 @@ async function refreshToken(): Promise<string | null> {
     const refreshToken = cookies.get('refreshToken');
     if (!refreshToken) return null;
 
-    refreshPromise = fetch(`${BASE_URL}/auth/refresh`, {
+    refreshPromise = fetch(`${BASE_URL}auth/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -19,6 +19,8 @@ async function refreshToken(): Promise<string | null> {
       body: JSON.stringify({ refreshToken }),
     })
       .then(async (res) => {
+        console.log('res', res);
+        
         if (!res.ok) {
           const error = handleGlobalError(new Error('Token refresh failed'), 'refreshToken');
           throw error;

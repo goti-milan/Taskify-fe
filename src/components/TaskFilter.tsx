@@ -1,14 +1,28 @@
 import CenterButton from "./CenterButton";
 import { useFilter } from "../context/FilterContext";
+import type { Filters } from "../context/FilterContext";
 
-export function TaskFilters() {
-  const { filters, onFilterChange } = useFilter();
+interface TaskFiltersProps {
+  onApply?: (filters: Filters) => void;
+  onClear?: () => void;
+  onFilterChange?: <K extends keyof Filters>(name: K, value: Filters[K]) => void;
+}
+
+export function TaskFilters({ onApply, onClear, onFilterChange }: TaskFiltersProps) {
+  const { filters: contextFilters, onFilterChange: contextOnFilterChange, clearAllFilters } = useFilter();
+  const handleFilterChange = onFilterChange || contextOnFilterChange;
 
   const handleApply = () => {
-    // Use filters to call API
-    // Example:
-    // fetchTasks(filters)
-    console.log("Applying filters:", filters);
+    if (onApply) {
+      onApply(contextFilters);
+    }
+  };
+
+  const handleClear = () => {
+    clearAllFilters();
+    if (onClear) {
+      onClear();
+    }
   };
 
   return (
@@ -16,20 +30,20 @@ export function TaskFilters() {
 
       {/* Status */}
       <select
-        value={filters.status}
-        onChange={(e) => onFilterChange("status", e.target.value)}
+        value={contextFilters.status}
+        onChange={(e) => handleFilterChange("status", e.target.value)}
         className="rounded-lg theme-border px-3 py-2 text-sm"
       >
         <option value="">All Status</option>
         <option value="pending">Pending</option>
-        <option value="in-progress">In Progress</option>
+        <option value="in_progress">In Progress</option>
         <option value="completed">Completed</option>
       </select>
 
       {/* Priority */}
       <select
-        value={filters.priority}
-        onChange={(e) => onFilterChange("priority", e.target.value)}
+        value={contextFilters.priority}
+        onChange={(e) => handleFilterChange("priority", e.target.value)}
         className="rounded-lg theme-border px-3 py-2 text-sm"
       >
         <option value="">All Priority</option>
@@ -40,8 +54,8 @@ export function TaskFilters() {
 
       {/* Sort Field */}
       <select
-        value={filters.sortField}
-        onChange={(e) => onFilterChange("sortField", e.target.value)}
+        value={contextFilters.sortField}
+        onChange={(e) => handleFilterChange("sortField", e.target.value)}
         className="rounded-lg theme-border px-3 py-2 text-sm"
       >
         <option value="dueDate">Due Date</option>
@@ -51,9 +65,9 @@ export function TaskFilters() {
 
       {/* Sort Order */}
       <select
-        value={filters.sortOrder}
+        value={contextFilters.sortOrder}
         onChange={(e) =>
-          onFilterChange("sortOrder", e.target.value as "asc" | "desc")
+          handleFilterChange("sortOrder", e.target.value as "asc" | "desc")
         }
         className="rounded-lg theme-border px-3 py-2 text-sm"
       >
@@ -65,16 +79,23 @@ export function TaskFilters() {
       <input
         type="number"
         min={1}
-        value={filters.limit}
-        onChange={(e) => onFilterChange("limit", Number(e.target.value))}
+        value={contextFilters.limit}
+        onChange={(e) => handleFilterChange("limit", Number(e.target.value))}
         className="w-16 rounded-lg theme-border px-3 py-2 text-sm"
       />
+
+      <CenterButton
+        onClick={handleClear}
+        variant="secondary"
+        size="sm"
+      >
+        Clear
+      </CenterButton>
 
       <CenterButton
         onClick={handleApply}
         variant="primary"
         size="sm"
-        className="ml-auto"
       >
         Apply
       </CenterButton>

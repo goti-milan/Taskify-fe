@@ -7,6 +7,9 @@ export type Filters = {
     sortField: string;
     sortOrder: 'asc' | 'desc';
     limit: number;
+    page: number;
+    total?: number;
+    totalPages?: number;
 };
 
 interface FilterContextType {
@@ -25,6 +28,9 @@ const defaultFilters: Filters = {
     sortField: 'dueDate',
     sortOrder: 'asc',
     limit: 10,
+    page: 1,
+    total: 0,
+    totalPages: 0,
 };
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
@@ -47,17 +53,22 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const removeFilter = useCallback((filterKey: keyof Filters) => {
-        setFilters(prev => ({
-            ...prev,
-            [filterKey]:
-                filterKey === 'limit'
-                    ? 10
-                    : filterKey === 'sortField'
-                        ? 'dueDate'
-                        : filterKey === 'sortOrder'
-                            ? 'asc'
-                            : '',
-        }));
+        setFilters(prev => {
+            const updates: Partial<Filters> = {};
+
+            if (filterKey === 'sortField' || filterKey === 'sortOrder') {
+                // Reset both sort fields together
+                updates.sortField = 'dueDate';
+                updates.sortOrder = 'asc';
+            } else if (filterKey === 'limit') {
+                updates.limit = 10;
+            } else if (filterKey === 'status' || filterKey === 'priority') {
+                // Reset status or priority to empty strings
+                updates[filterKey] = '';
+            }
+
+            return { ...prev, ...updates };
+        });
     }, []);
 
     return (

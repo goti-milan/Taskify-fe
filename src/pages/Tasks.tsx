@@ -5,39 +5,91 @@ import { TaskFilters } from '../components/TaskFilter'
 import { FilterSummary } from '../components/FilterSummary'
 import Pagination from '../components/Pagination'
 import { useTaskModal } from '../context/TaskModalContext'
-import { fetchTasks, type Task } from '../api/task.api'
+import { useFilter } from '../context/FilterContext'
+import { deleteTask, fetchTasks, type Task, type TaskFilters as ApiTaskFilters } from '../api/task.api'
 
 const TaskBoard: React.FC = () => {
-    const { isOpen, closeModal, openCreateTask } = useTaskModal()
+    const { isOpen, openModal, closeModal } = useTaskModal()
+    const { filters: filterState, onFilterChange } = useFilter()
 
     const [taskList, setTaskList] = useState<Task[]>([])
     const [loading, setLoading] = useState(false)
 
-    const getAllTasks = useCallback(async () => {
+    const getAllTasks = useCallback(async (filters?: ApiTaskFilters) => {
         setLoading(true)
         try {
-            const res = await fetchTasks()
+            const res = await fetchTasks(filters)
             if (res?.success) {
+                console.log('res', res);
+
                 setTaskList(res.data as Task[])
+                const { page, limit, total, totalPages } = res.meta;
+                onFilterChange('page', page);
+                onFilterChange('limit', limit);
+                onFilterChange('total', total);
+                onFilterChange('totalPages', totalPages);
             }
         } finally {
             setLoading(false)
         }
     }, [])
 
+    // Initial fetch
     useEffect(() => {
         getAllTasks()
     }, [getAllTasks])
 
+    // Handle apply filters
+    const handleApplyFilters = useCallback(() => {
+        const apiFilters: ApiTaskFilters = {};
+
+        if (filterState.status) {
+            apiFilters.status = filterState.status as import('../api/task.api').TaskStatus;
+        }
+        if (filterState.priority) {
+            apiFilters.priority = filterState.priority as import('../api/task.api').TaskPriority;
+        }
+        if (filterState.sortField && filterState.sortField !== 'priority') {
+            apiFilters.sort = filterState.sortField as 'createdAt' | 'dueDate';
+        }
+        if (filterState.sortOrder) {
+            apiFilters.order = filterState.sortOrder;
+        }
+        if (filterState.limit) {
+            apiFilters.limit = filterState.limit;
+        }
+
+        getAllTasks(apiFilters);
+    }, [filterState, getAllTasks]);
+
+    // Handle clear filters
+    const handleClearFilters = useCallback(() => {
+        getAllTasks();
+    }, [getAllTasks]);
+
     const handleCreateTask = useCallback(() => {
-        openCreateTask()
-    }, [openCreateTask])
+        openModal("create")
+    }, [openModal])
+
+    const handleDeleteTask = useCallback(
+        async (taskId: string) => {
+            try {
+                const res = await deleteTask(taskId)
+                if (res?.success) {
+                    setTaskList(prev => prev.filter(task => task.id !== taskId))
+                }
+            } finally {
+                setLoading(false)
+            }
+        },
+        []
+    )
 
     const handleEditTask = useCallback(
-        (_taskId: string) => {
-            openCreateTask()
+        (taskId: string) => {
+            openModal(taskId)
         },
-        [openCreateTask]
+        [openModal]
     )
 
     const handleCloseModal = useCallback(() => {
@@ -46,13 +98,9 @@ const TaskBoard: React.FC = () => {
 
     return (
         <div className="flex flex-col">
-            <h1 className="mb-4 text-2xl md:text-3xl font-bold theme-text-primary">
-                Task Board
-            </h1>
-
             {/* Desktop filters */}
             <div className="hidden md:block mb-4">
-                <TaskFilters />
+                <TaskFilters onApply={handleApplyFilters} onClear={handleClearFilters} />
             </div>
 
             {/* Mobile filter summary */}
@@ -102,20 +150,26 @@ const TaskBoard: React.FC = () => {
                         key={task.id}
                         task={task}
                         onEdit={() => handleEditTask(task.id)}
+                        onDelete={() => handleDeleteTask(task.id)}
                     />
                 ))}
             </div>
 
             {/* Pagination */}
-            <Pagination />
+            {(filterState?.total && filterState?.limit < filterState?.total) &&
+                <Pagination
+                    totalPages={filterState?.totalPages as number}
+                    onPageChange={(page) => {
+                        onFilterChange('page', page);
+                    }}
+                />}
 
             {/* Create / Edit Modal */}
             <CreateTaskForm
-                open={isOpen}
+                open={isOpen !== ""}
+                data={isOpen}
                 close={handleCloseModal}
-                onSubmit={(data) => {
-                    console.log(data)
-                    handleCloseModal()
+                onSubmit={() => {
                     getAllTasks()
                 }}
             />

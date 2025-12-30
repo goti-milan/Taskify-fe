@@ -15,12 +15,12 @@ interface MobileLayoutProps {
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
     const { user } = useAuth();
-    const { openCreateTask } = useTaskModal();
+    const { openModal } = useTaskModal();
     const { onFilterChange } = useFilter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const handleAddTask = () => {
-        openCreateTask();
+        openModal('create');
     };
 
     const handleProfileClick = () => {

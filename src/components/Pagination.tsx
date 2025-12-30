@@ -1,13 +1,18 @@
 import ReactPaginate from 'react-paginate'
 
-const Pagination = () => {
+interface Props {
+    totalPages: number
+    onPageChange: (page: number) => void
+}
+
+const Pagination = ({ totalPages, onPageChange }: Props) => {
     return (
         <div className="w-full">
             <ReactPaginate
-                pageCount={10}
+                pageCount={totalPages}
                 pageRangeDisplayed={3}
                 marginPagesDisplayed={2}
-                onPageChange={(selected) => console.log(selected.selected)}
+                onPageChange={(selected) => onPageChange(selected.selected)}
                 containerClassName="flex gap-2 justify-center mt-4 flex-wrap"
                 pageClassName="px-3 py-1 theme-border border rounded theme-surface theme-text-primary hover:theme-surface-hover transition-colors cursor-pointer"
                 activeClassName="bg-primary-600 text-white border-primary-600 hover:bg-primary-700 theme-text-primary"

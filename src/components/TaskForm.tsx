@@ -1,151 +1,189 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "./Modal";
 import CenterButton from "./CenterButton";
+import { FormField } from "./FormField";
+import { createTask, fetchTaskById, updateTask, type TaskPriority, type TaskStatus } from "../api/task.api";
 
-export type TaskStatus = "pending" | "in-progress" | "completed";
-export type TaskPriority = "low" | "medium" | "high";
-
-export type CreateTaskInput = {
-    title: string;
-    description?: string;
-    status: TaskStatus;
-    priority: TaskPriority;
-    dueDate?: string;
+const EMPTY_FORM = {
+    title: "",
+    description: "",
+    status: "pending" as TaskStatus,
+    priority: "medium" as TaskPriority,
+    dueDate: "",
 };
 
+type FormData = typeof EMPTY_FORM;
 
-export function CreateTaskForm({
-    open,
-    close,
-    onSubmit,
-}: {
-    open: boolean;
-    close: () => void;
-    onSubmit: (data: CreateTaskInput) => void;
-}) {
-    const [form, setForm] = useState<CreateTaskInput>({
-        title: "",
-        description: "",
-        status: "pending",
-        priority: "medium",
-        dueDate: "",
-    });
+interface ValidationErrors {
+    title?: string;
+    status?: string;
+    priority?: string;
+}
 
-    function handleChange(
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-    ) {
+function validateForm(form: FormData): ValidationErrors {
+    const errors: ValidationErrors = {};
+
+    if (!form.title.trim()) {
+        errors.title = "Title is required";
+    }
+
+    if (!form.status) {
+        errors.status = "Status is required";
+    }
+
+    if (!form.priority) {
+        errors.priority = "Priority is required";
+    }
+
+    return errors;
+}
+
+export function     CreateTaskForm({ open, data, close, onSubmit }: any) {
+    const isEdit = data !== "create";
+
+    const [form, setForm] = useState<FormData>(EMPTY_FORM);
+    const [errors, setErrors] = useState<ValidationErrors>({});
+    const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (!open) return;
+        if (!isEdit) {
+            setForm(EMPTY_FORM);
+            setErrors({});
+            return;
+        }
+
+        const loadTask = async () => {
+            setLoading(true);
+            const res = await fetchTaskById(data);
+            if (res?.success) {
+                const task = res.data;
+                setForm({
+                    title: task.title,
+                    description: task.description || "",
+                    status: task.status,
+                    priority: task.priority,
+                    dueDate: task.dueDate
+                        ? new Date(task.dueDate).toISOString().split("T")[0]
+                        : "",
+                });
+            }
+            setLoading(false);
+        };
+
+        loadTask();
+    }, [data, isEdit, open]);
+
+    const handleChange = (e: any) => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
-    }
+        setErrors((prev: any) => ({ ...prev, [name]: undefined }));
+    };
 
-    function handleSubmit(e: React.FormEvent) {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(form);
-    }
+
+        const validationErrors = validateForm(form);
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            isEdit
+                ? await updateTask(data, form)
+                : await createTask(form);
+
+            onSubmit(form);
+            close();
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
-        <Modal open={open} onClose={close} title="Create Task">
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Title */}
-                <div>
-                    <label className="block text-sm font-medium theme-text-primary mb-1">
-                        Title
-                    </label>
-                    <input
+        <Modal open={open} onClose={close} title={isEdit ? "Edit Task" : "Create Task"}>
+            {loading ? (
+                <p className="text-center py-10">Loading...</p>
+            ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <FormField
+                        label="Title"
                         name="title"
-                        required
                         value={form.title}
                         onChange={handleChange}
-                        placeholder="Task title"
-                        className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+                        error={errors.title}
+                        required
                     />
-                </div>
 
-                {/* Description */}
-                <div>
-                    <label className="block text-sm font-medium theme-text-primary mb-1">
-                        Description
-                    </label>
-                    <textarea
+                    <FormField
+                        label="Description"
                         name="description"
-                        rows={3}
+                        type="textarea"
                         value={form.description}
                         onChange={handleChange}
-                        placeholder="Optional description"
-                        className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
                     />
-                </div>
 
-                {/* Status + Priority */}
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium theme-text-primary mb-1">
-                            Status
-                        </label>
-                        <select
+                    <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                            label="Status"
                             name="status"
+                            type="select"
                             value={form.status}
                             onChange={handleChange}
-                            className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                        >
-                            <option value="pending">Pending</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    </div>
+                            error={errors.status}
+                            options={[
+                                { label: "Pending", value: "pending" },
+                                { label: "In Progress", value: "in_progress" },
+                                { label: "Completed", value: "completed" },
+                            ]}
+                            required
+                        />
 
-                    <div>
-                        <label className="block text-sm font-medium theme-text-primary mb-1">
-                            Priority
-                        </label>
-                        <select
+                        <FormField
+                            label="Priority"
                             name="priority"
+                            type="select"
                             value={form.priority}
                             onChange={handleChange}
-                            className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-                        >
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
+                            error={errors.priority}
+                            options={[
+                                { label: "Low", value: "low" },
+                                { label: "Medium", value: "medium" },
+                                { label: "High", value: "high" },
+                            ]}
+                            required
+                        />
                     </div>
-                </div>
 
-                {/* Due Date */}
-                <div>
-                    <label className="block text-sm font-medium theme-text-primary mb-1">
-                        Due Date
-                    </label>
-                    <input
-                        type="date"
+                    <FormField
+                        label="Due Date"
                         name="dueDate"
+                        type="date"
                         value={form.dueDate}
-                        min={new Date().toISOString().split("T")[0]}
                         onChange={handleChange}
-                        className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                     />
-                </div>
 
-                {/* Actions */}
-                <div className="flex justify-end gap-3 pt-4 border-t theme-border">
-                    <CenterButton
-                        type="button"
-                        onClick={close}
-                        variant="ghost"
-                        size="sm"
-                    >
-                        Cancel
-                    </CenterButton>
-                    <CenterButton
-                        type="submit"
-                        variant="primary"
-                        size="sm"
-                    >
-                        Create Task
-                    </CenterButton>
-                </div>
-            </form>
+                    <div className="flex justify-end gap-3 pt-4 border-t theme-border">
+                        <CenterButton type="button" onClick={close} variant="ghost">
+                            Cancel
+                        </CenterButton>
+                        <CenterButton
+                            type="submit"
+                            variant="primary"
+                            disabled={submitting}
+                        >
+                            {submitting
+                                ? "Saving..."
+                                : isEdit
+                                    ? "Update Task"
+                                    : "Create Task"}
+                        </CenterButton>
+                    </div>
+                </form>
+            )}
         </Modal>
     );
 }

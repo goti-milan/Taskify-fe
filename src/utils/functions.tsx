@@ -66,13 +66,13 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   // Map status to Tailwind classes
   const statusClasses: Record<TaskStatus, string> = {
     pending: 'bg-yellow-100 text-yellow-800',
-    in_progress: 'bg-blue-100 text-blue-600',
+    'in_progress': 'bg-blue-100 text-blue-600',
     completed: 'bg-emerald-100 text-emerald-600',
   }
 
   const displayText: Record<TaskStatus, string> = {
     pending: 'Pending',
-    in_progress: 'In Progress',
+    'in_progress': 'In Progress',
     completed: 'Completed',
   }
 

@@ -1,4 +1,5 @@
 import { useFilter } from '../context/FilterContext';
+import type { Filters } from '../context/FilterContext';
 
 export function FilterSummary() {
     const { filters, clearAllFilters, removeFilter } = useFilter();
@@ -8,7 +9,7 @@ export function FilterSummary() {
         const displayNames: Record<string, Record<string, string>> = {
             status: {
                 'pending': 'Pending',
-                'in-progress': 'In Progress',
+                'in_progress': 'In Progress',
                 'completed': 'Completed'
             },
             priority: {
@@ -35,15 +36,21 @@ export function FilterSummary() {
         return null;
     }
 
-    const activeFilters = [
-        ...(status ? [{ key: 'status', label: getFilterDisplayName('status', status), value: status }] : []),
-        ...(priority ? [{ key: 'priority', label: getFilterDisplayName('priority', priority), value: priority }] : []),
+    type FilterItem = {
+        key: keyof Filters;
+        label: string;
+        value: string;
+    };
+
+    const activeFilters: FilterItem[] = [
+        ...(status ? [{ key: 'status' as const, label: getFilterDisplayName('status', status), value: status }] : []),
+        ...(priority ? [{ key: 'priority' as const, label: getFilterDisplayName('priority', priority), value: priority }] : []),
         ...(sortField !== 'dueDate' || sortOrder !== 'asc' ? [{
-            key: 'sortField',
+            key: 'sortField' as const,
             label: `${getFilterDisplayName('sortField', sortField)} (${sortOrder})`,
             value: `${sortField}-${sortOrder}`
         }] : []),
-        ...(limit !== 10 ? [{ key: 'limit', label: `Limit: ${limit}`, value: limit.toString() }] : [])
+        ...(limit !== 10 ? [{ key: 'limit' as const, label: `Limit: ${limit}`, value: limit.toString() }] : [])
     ];
 
     return (

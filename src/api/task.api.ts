@@ -52,7 +52,7 @@ export const fetchTasks = (filters?: TaskFilters) =>
   apiFetch<TaskListResponse>('tasks', { method: 'GET' }, filters);
 
 // GET /tasks/:id
-export const fetchTaskById = (id: string) =>
+export const  fetchTaskById = (id: string) =>
   apiFetch<TaskResponse>(`tasks/${id}`, { method: 'GET' });
 
 // POST /tasks

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AuthLayout from '../layouts/AuthLayout';
 import CenterButton from '../components/CenterButton';
+import { FormField } from '../components/FormField';
 
 const Register: React.FC = () => {
     const [name, setName] = useState('');
@@ -56,81 +57,45 @@ const Register: React.FC = () => {
                     </div>
                 )}
 
-                <div>
-                    <label htmlFor="name" className="block text-sm font-medium theme-text-primary">
-                        Full name
-                    </label>
-                    <div className="mt-1">
-                        <input
-                            id="name"
-                            name="name"
-                            type="text"
-                            autoComplete="name"
-                            required
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="appearance-none block w-full px-3 py-2 theme-border rounded-md theme-surface placeholder-theme-text-muted focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
-                            placeholder="Enter your full name"
-                        />
-                    </div>
-                </div>
+                <FormField
+                    label="Full name"
+                    name="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    placeholder="Enter your full name"
+                />
 
-                <div>
-                    <label htmlFor="email" className="block text-sm font-medium theme-text-primary">
-                        Email address
-                    </label>
-                    <div className="mt-1">
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            autoComplete="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="appearance-none block w-full px-3 py-2 theme-border rounded-md theme-surface placeholder-theme-text-muted focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
-                            placeholder="Enter your email"
-                        />
-                    </div>
-                </div>
+                <FormField
+                    label="Email address"
+                    name="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="Enter your email"
+                />
 
-                <div>
-                    <label htmlFor="password" className="block text-sm font-medium theme-text-primary">
-                        Password
-                    </label>
-                    <div className="mt-1">
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            autoComplete="new-password"
-                            required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="appearance-none block w-full px-3 py-2 theme-border rounded-md theme-surface placeholder-theme-text-muted focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
-                            placeholder="Create a password"
-                        />
-                    </div>
-                </div>
+                <FormField
+                    label="Password"
+                    name="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="Create a password"
+                />
 
-                <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium theme-text-primary">
-                        Confirm password
-                    </label>
-                    <div className="mt-1">
-                        <input
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            type="password"
-                            autoComplete="new-password"
-                            required
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="appearance-none block w-full px-3 py-2 theme-border rounded-md theme-surface placeholder-theme-text-muted focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
-                            placeholder="Confirm your password"
-                        />
-                    </div>
-                </div>
+                <FormField
+                    label="Confirm password"
+                    name="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    placeholder="Confirm your password"
+                />
 
                 <div className="flex items-center">
                     <input

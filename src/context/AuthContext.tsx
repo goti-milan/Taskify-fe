@@ -14,6 +14,7 @@ interface AuthContextType {
     register: (email: string, password: string, name: string) => Promise<boolean>;
     logout: () => void;
     isLoading: boolean;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
     isAuthenticated: boolean;
 }
 
@@ -58,6 +59,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return false;
         } catch {
             return false;
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -82,6 +85,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return false;
         } catch {
             return false;
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -110,6 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 register,
                 logout,
                 isLoading,
+                setIsLoading,
                 isAuthenticated: !!user,
             }}
         >
