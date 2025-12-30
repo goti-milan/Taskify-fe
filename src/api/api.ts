@@ -1,28 +1,32 @@
-import { buildQueryString, cookies, handleGlobalError } from "../utils/functions";
+import {
+  buildQueryString,
+  cookies,
+  handleGlobalError,
+} from "../utils/functions";
 
-export const BASE_URL =
-  import.meta.env.VITE_API_URL 
+export const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 let refreshPromise: Promise<string | null> | null = null;
 
 /* ------------------ Refresh Token ------------------ */
 async function refreshToken(): Promise<string | null> {
   if (!refreshPromise) {
-    const refreshToken = cookies.get('refreshToken');
+    const refreshToken = cookies.get("refreshToken");
     if (!refreshToken) return null;
 
     refreshPromise = fetch(`${BASE_URL}auth/refresh`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ refreshToken }),
     })
       .then(async (res) => {
-        console.log('res', res);
-        
         if (!res.ok) {
-          const error = handleGlobalError(new Error('Token refresh failed'), 'refreshToken');
+          const error = handleGlobalError(
+            new Error("Token refresh failed"),
+            "refreshToken"
+          );
           throw error;
         }
 
@@ -30,8 +34,8 @@ async function refreshToken(): Promise<string | null> {
         const accessToken = json?.data?.tokens?.accessToken;
         const newRefreshToken = json?.data?.tokens?.refreshToken;
 
-        if (accessToken) cookies.set('token', accessToken);
-        if (newRefreshToken) cookies.set('refreshToken', newRefreshToken);
+        if (accessToken) cookies.set("token", accessToken);
+        if (newRefreshToken) cookies.set("refreshToken", newRefreshToken);
 
         return accessToken ?? null;
       })
@@ -49,7 +53,7 @@ export async function apiFetch<T>(
   options: RequestInit = {},
   params?: {}
 ): Promise<T> {
-  let token = cookies.get('token');
+  let token = cookies.get("token");
 
   let url = `${BASE_URL}${endpoint}`;
 
@@ -61,7 +65,7 @@ export async function apiFetch<T>(
   const isFormData = options.body instanceof FormData;
 
   const headers: HeadersInit = {
-    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(options.headers || {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
@@ -77,7 +81,7 @@ export async function apiFetch<T>(
 
     if (!newToken) {
       logout();
-      const error = handleGlobalError(new Error('Unauthorized'), 'apiFetch');
+      const error = handleGlobalError(new Error("Unauthorized"), "apiFetch");
       throw error;
     }
 
@@ -93,7 +97,10 @@ export async function apiFetch<T>(
   const data = await res.json();
 
   if (!res.ok || data?.success === false) {
-    const error = handleGlobalError(new Error(data?.error || 'Something went wrong'), 'apiFetch');
+    const error = handleGlobalError(
+      new Error(data?.error || "Something went wrong"),
+      "apiFetch"
+    );
     throw error;
   }
 
@@ -102,7 +109,7 @@ export async function apiFetch<T>(
 
 /* ------------------ Logout ------------------ */
 function logout() {
-  cookies.remove('token');
-  cookies.remove('refreshToken');
-  window.location.href = '/auth/login';
+  cookies.remove("token");
+  cookies.remove("refreshToken");
+  window.location.href = "/auth/login";
 }
