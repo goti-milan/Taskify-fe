@@ -8,7 +8,7 @@ interface AuthLayoutProps {
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) => {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 <div>
                     <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-600">
@@ -27,16 +27,16 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) =>
                             />
                         </svg>
                     </div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    <h2 className="mt-6 text-center text-3xl font-extrabold theme-text-primary">
                         {title}
                     </h2>
                     {subtitle && (
-                        <p className="mt-2 text-center text-sm text-gray-600">
+                        <p className="mt-2 text-center text-sm theme-text-secondary">
                             {subtitle}
                         </p>
                     )}
                 </div>
-                <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
+                <div className="theme-surface py-8 px-6 shadow-xl rounded-lg border theme-border">
                     {children}
                 </div>
             </div>

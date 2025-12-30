@@ -1,136 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import ThemeToggle from '../components/ThemeToggle';
+import Layout from '../layouts/Layout';
+import { Dashboard } from './Dashboard';
+import TaskBoard from './Tasks';
+import { useAuth } from '../context/AuthContext';
 
 const Home: React.FC = () => {
+    const { user } = useAuth()
     return (
-        <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100">
-            {/* Header */}
-            <header className="theme-surface shadow-sm transition-theme">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center py-6">
-                        <div className="flex items-center">
-                            <div className="h-8 w-8 bg-primary-600 rounded-full flex items-center justify-center">
-                                <svg
-                                    className="h-5 w-5 text-white"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                                    />
-                                </svg>
-                            </div>
-                            <h1 className="ml-3 text-2xl font-bold theme-text-primary">Taskify</h1>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                            <ThemeToggle />
-                            <Link
-                                to="/login"
-                                className="theme-text-secondary hover:theme-text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                            >
-                                Login
-                            </Link>
-                            <Link
-                                to="/register"
-                                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                            >
-                                Sign up
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            {/* Hero Section */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center py-20">
-                    <h1 className="text-4xl tracking-tight font-extrabold theme-text-primary sm:text-5xl md:text-6xl">
-                        <span className="block">Welcome to</span>
-                        <span className="block text-primary-600">Taskify</span>
-                    </h1>
-                    <p className="mt-3 max-w-md mx-auto text-base theme-text-muted sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                        Organize your tasks efficiently and boost your productivity.
-                        Create, manage, and track your tasks with ease.
-                    </p>
-                    <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
-                        <div className="rounded-md shadow">
-                            <Link
-                                to="/register"
-                                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 transition-colors"
-                            >
-                                Get started
-                            </Link>
-                        </div>
-                        <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                            <Link
-                                to="/login"
-                                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-600 theme-surface hover:theme-surface-hover md:py-4 md:text-lg md:px-10 transition-colors"
-                            >
-                                Sign in
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Features Section */}
-                <div className="py-16 theme-surface rounded-lg shadow-lg transition-theme">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="lg:text-center">
-                            <h2 className="text-base text-primary-600 font-semibold tracking-wide uppercase">Features</h2>
-                            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight theme-text-primary sm:text-4xl">
-                                Everything you need to stay organized
-                            </p>
-                        </div>
-
-                        <div className="mt-10">
-                            <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
-                                <div className="text-center">
-                                    <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white mx-auto">
-                                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                        </svg>
-                                    </div>
-                                    <h3 className="mt-4 text-lg leading-6 font-medium theme-text-primary">Task Management</h3>
-                                    <p className="mt-2 text-base theme-text-muted">
-                                        Create, edit, and organize your tasks with priority levels and due dates.
-                                    </p>
-                                </div>
-
-                                <div className="text-center">
-                                    <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white mx-auto">
-                                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                        </svg>
-                                    </div>
-                                    <h3 className="mt-4 text-lg leading-6 font-medium theme-text-primary">Progress Tracking</h3>
-                                    <p className="mt-2 text-base theme-text-muted">
-                                        Monitor your productivity with visual progress indicators and statistics.
-                                    </p>
-                                </div>
-
-                                <div className="text-center">
-                                    <div className="flex items-center justify-center h-12 w-12 rounded-md bg-primary-500 text-white mx-auto">
-                                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                        </svg>
-                                    </div>
-                                    <h3 className="mt-4 text-lg leading-6 font-medium theme-text-primary">Secure & Private</h3>
-                                    <p className="mt-2 text-base theme-text-muted">
-                                        Your data is protected with enterprise-grade security measures.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
+        <Layout>
+            {!user ? <Dashboard />
+                : <TaskBoard />}
+        </Layout>
     );
 };
 

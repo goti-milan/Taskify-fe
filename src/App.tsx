@@ -9,8 +9,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import { TaskModalProvider } from './context/TaskModalContext';
 import { FilterProvider } from './context/FilterContext';
 import TaskBoard from './pages/Tasks';
-import Layout from './components/Layout';
-import MobileLayout from './components/MobileLayout';
+import MobileLayout from './layouts/MobileLayout';
+import Layout from './layouts/Layout';
 
 function App() {
   return (

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { getProgress } from "../utils/functions";
-import type { Task } from "../utils/data";
+import { getProgress, PriorityBadge, StatusBadge } from "../utils/functions";
 import { CiMenuKebab } from "react-icons/ci";
+import type { Task } from "../api/task.api";
 
 type Props = {
     task: Task;
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export function TaskCard({ task, onEdit, onDelete, onComplete }: Props) {
-    const { percent, overdue } = getProgress(task.createdAt, task.dueDate);
+    const { percent, overdue } = getProgress(task.createdAt, task.dueDate as string);
     const isNearDue = percent >= 90 && !overdue;
 
     const [menuOpen, setMenuOpen] = useState(false);
@@ -36,45 +36,20 @@ export function TaskCard({ task, onEdit, onDelete, onComplete }: Props) {
         hover:-translate-y-1 hover:shadow-lg
         border
         ${overdue
-                    ? "border-red-500 bg-red-50/40"
+                    ? "border-red-500 bg-red-50/40 dark:bg-red-900/20"
                     : isNearDue
-                        ? "border-yellow-400 bg-yellow-50/40"
+                        ? "border-yellow-400 bg-yellow-50/40 dark:bg-yellow-900/20"
                         : "theme-border theme-surface"
                 }`}
         >
             {/* Top */}
             <div>
                 <div className="flex justify-between relative">
-                    <div className="flex gap-2">
-                        {/* Priority badge */}
-                        <span
-                            className={`inline-block mb-3 rounded-full px-3 py-1 text-xs font-medium capitalize
-                    ${task.priority === "high"
-                                    ? "bg-red-500/10 text-red-600"
-                                    : task.priority === "medium"
-                                        ? "bg-orange-500/10 text-orange-600"
-                                        : "bg-emerald-500/10 text-emerald-600"
-                                }`}
-                        >
-                            {task.priority}
-                        </span>
-                        {/* Status badge */}
-                        <span
-                            className={`inline-block mb-3 rounded-full px-3 py-1 text-xs font-medium capitalize
-                        ${task.status === "todo"
-                                    ? "theme-surface theme-text-muted"
-                                    : task.status === "in-progress"
-                                        ? "bg-primary-500/10 text-primary-600"
-                                        : task.status === "review"
-                                            ? "bg-yellow-500/10 text-yellow-600"
-                                            : "bg-emerald-500/10 text-emerald-600"
-                                }`}
-                        >
-                            {task.status.replace("-", " ")}
-                        </span>
-                    </div>
+                    <span className="flex gap-2">
+                        <PriorityBadge priority={task.priority} />
+                        <StatusBadge status={task.status} />
+                    </span>
 
-                    {/* Kebab menu */}
                     <div className="relative" ref={menuRef}>
                         <CiMenuKebab
                             className="cursor-pointer"
@@ -82,13 +57,13 @@ export function TaskCard({ task, onEdit, onDelete, onComplete }: Props) {
                             onClick={() => setMenuOpen(!menuOpen)}
                         />
                         {menuOpen && (
-                            <div className="absolute right-0 mt-2 w-40 rounded-lg bg-white shadow-lg border z-10">
+                            <div className="absolute right-0 mt-2 w-40 rounded-lg theme-surface shadow-lg theme-border border z-10">
                                 <button
                                     onClick={() => {
                                         setMenuOpen(false);
                                         onEdit?.(task);
                                     }}
-                                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                                    className="w-full text-left px-4 py-2 theme-text-primary theme-surface-hover transition-colors"
                                 >
                                     Edit
                                 </button>
@@ -97,7 +72,7 @@ export function TaskCard({ task, onEdit, onDelete, onComplete }: Props) {
                                         setMenuOpen(false);
                                         onComplete?.(task);
                                     }}
-                                    className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                                    className="w-full text-left px-4 py-2 theme-text-primary theme-surface-hover transition-colors"
                                 >
                                     Mark Complete
                                 </button>
@@ -106,7 +81,7 @@ export function TaskCard({ task, onEdit, onDelete, onComplete }: Props) {
                                         setMenuOpen(false);
                                         onDelete?.(task);
                                     }}
-                                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+                                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                 >
                                     Delete
                                 </button>
@@ -127,7 +102,7 @@ export function TaskCard({ task, onEdit, onDelete, onComplete }: Props) {
             {/* Bottom */}
             <div className="pt-4 border-t theme-border">
                 <div className="flex items-center justify-between text-xs theme-text-muted">
-                    <span>Due {new Date(task.dueDate).toLocaleDateString()}</span>
+                    <span>Due {new Date(task?.dueDate as string).toLocaleDateString()}</span>
                     <span
                         className={`font-medium ${overdue
                             ? "text-red-600"

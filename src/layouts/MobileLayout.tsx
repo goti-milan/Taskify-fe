@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTaskModal } from '../context/TaskModalContext';
 import { useFilter } from '../context/FilterContext';
-import ThemeToggle from './ThemeToggle';
-import { TaskFilters } from './TaskFilter';
 import { FaPlus } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { GiHamburgerMenu } from 'react-icons/gi';
+import { TaskFilters } from '../components/TaskFilter';
+import ThemeToggle from '../components/ThemeToggle';
+import { IoMdCloseCircleOutline } from 'react-icons/io';
 
 interface MobileLayoutProps {
     children: React.ReactNode;
@@ -45,7 +46,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
 
                 {/* Dark Mode Toggle */}
                 <div className=" flex items-center justify-center">
-                    <ThemeToggle  />
+                    <ThemeToggle />
                 </div>
             </header>
 
@@ -55,7 +56,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
             </main>
 
             {/* Bottom Navigation */}
-            <nav className="fixed bottom-0 left-0 right-0 theme-surface border-t theme-border z-50">
+            <nav className="fixed bottom-0 left-0 right-0 theme-surface border-t theme-border z-40">
                 <div className="flex items-center justify-around h-16 px-4">
                     {/* Profile Icon - Left */}
                     <button
@@ -99,15 +100,15 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
 
             {/* Sidebar Overlay */}
             {isSidebarOpen && (
-                <div className="fixed inset-0 z-50 flex">
+                <div className="fixed inset-0 z-90 flex">
                     {/* Backdrop */}
                     <div
-                        className="fixed inset-0 bg-black/50 transition-opacity"
+                        className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm transition-opacity"
                         onClick={closeSidebar}
                     />
 
                     {/* Sidebar */}
-                    <div className="relative flex-1 max-w-xs w-full bg-theme-surface shadow-xl">
+                    <div className="relative flex-1 max-w-xs w-full theme-surface shadow-xl">
                         <div className="flex flex-col h-full">
                             {/* Sidebar Header */}
                             <div className="flex items-center justify-between p-4 border-b theme-border">
@@ -117,19 +118,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
                                     className="p-2 rounded-lg theme-surface-hover transition-colors"
                                     aria-label="Close filters"
                                 >
-                                    <svg
-                                        className="w-5 h-5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
+                                    <IoMdCloseCircleOutline />
                                 </button>
                             </div>
 

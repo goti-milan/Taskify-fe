@@ -52,14 +52,14 @@ const ThemeToggle: React.FC<Props> = ({ size = 'sm' }) => {
             aria-label="Toggle theme"
             className={`
         relative inline-flex items-center rounded-full
-        bg-gray-200 dark:bg-gray-700
+        theme-border theme-surface
         transition-colors duration-300
         focus:outline-none focus:ring-2 focus:ring-primary-500
         ${styles.track} ${styles.padding}
       `}
         >
             {/* Inactive icons on track */}
-            <div className="flex w-full items-center justify-between text-gray-400 dark:text-gray-300 pointer-events-none">
+            <div className="flex w-full items-center justify-between theme-text-muted pointer-events-none">
                 <IoSunny size={styles.icon} />
                 <IoIosMoon size={styles.icon} />
             </div>
@@ -69,7 +69,7 @@ const ThemeToggle: React.FC<Props> = ({ size = 'sm' }) => {
                 className={`
           absolute left-1
           flex items-center justify-center
-          rounded-full bg-white shadow
+          rounded-full theme-bg shadow
           transition-transform duration-300
           ${styles.thumb}
           ${isDark ? styles.translate : 'translate-x-0'}
@@ -77,7 +77,7 @@ const ThemeToggle: React.FC<Props> = ({ size = 'sm' }) => {
             >
                 {/* Active icon inside thumb */}
                 {isDark ? (
-                    <IoIosMoon size={styles.icon - 2} className="text-gray-700" />
+                    <IoIosMoon size={styles.icon - 2} className="theme-text-primary" />
                 ) : (
                     <IoSunny size={styles.icon - 2} className="text-yellow-500" />
                 )}

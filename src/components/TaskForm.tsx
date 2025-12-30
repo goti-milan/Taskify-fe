@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal } from "./Modal";
+import CenterButton from "./CenterButton";
 
 export type TaskStatus = "pending" | "in-progress" | "completed";
 export type TaskPriority = "low" | "medium" | "high";
@@ -45,10 +46,10 @@ export function CreateTaskForm({
     return (
         <Modal open={open} onClose={close} title="Create Task">
 
-            <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Title */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium theme-text-primary mb-1">
                         Title
                     </label>
                     <input
@@ -57,13 +58,13 @@ export function CreateTaskForm({
                         value={form.title}
                         onChange={handleChange}
                         placeholder="Task title"
-                        className="mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                     />
                 </div>
 
                 {/* Description */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium theme-text-primary mb-1">
                         Description
                     </label>
                     <textarea
@@ -72,21 +73,21 @@ export function CreateTaskForm({
                         value={form.description}
                         onChange={handleChange}
                         placeholder="Optional description"
-                        className="mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all resize-none"
                     />
                 </div>
 
                 {/* Status + Priority */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium theme-text-primary mb-1">
                             Status
                         </label>
                         <select
                             name="status"
                             value={form.status}
                             onChange={handleChange}
-                            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                            className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                         >
                             <option value="pending">Pending</option>
                             <option value="in-progress">In Progress</option>
@@ -95,14 +96,14 @@ export function CreateTaskForm({
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium theme-text-primary mb-1">
                             Priority
                         </label>
                         <select
                             name="priority"
                             value={form.priority}
                             onChange={handleChange}
-                            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                            className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                         >
                             <option value="low">Low</option>
                             <option value="medium">Medium</option>
@@ -113,7 +114,7 @@ export function CreateTaskForm({
 
                 {/* Due Date */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium theme-text-primary mb-1">
                         Due Date
                     </label>
                     <input
@@ -122,18 +123,27 @@ export function CreateTaskForm({
                         value={form.dueDate}
                         min={new Date().toISOString().split("T")[0]}
                         onChange={handleChange}
-                        className="mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-lg theme-border theme-surface theme-text-primary px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
                     />
                 </div>
 
                 {/* Actions */}
-                <div className="flex justify-end gap-3 pt-4">
-                    <button
+                <div className="flex justify-end gap-3 pt-4 border-t theme-border">
+                    <CenterButton
+                        type="button"
+                        onClick={close}
+                        variant="ghost"
+                        size="sm"
+                    >
+                        Cancel
+                    </CenterButton>
+                    <CenterButton
                         type="submit"
-                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                        variant="primary"
+                        size="sm"
                     >
                         Create Task
-                    </button>
+                    </CenterButton>
                 </div>
             </form>
         </Modal>

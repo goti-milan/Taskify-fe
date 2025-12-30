@@ -1,33 +1,24 @@
-import { useState } from "react";
+import CenterButton from "./CenterButton";
+import { useFilter } from "../context/FilterContext";
 
-type Props = {
-  onFilterChange: (query: Record<string, any>) => void;
-};
-
-export function TaskFilters({ onFilterChange }: Props) {
-  const [status, setStatus] = useState("");
-  const [priority, setPriority] = useState("");
-  const [sortField, setSortField] = useState("dueDate");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [limit, setLimit] = useState(10);
+export function TaskFilters() {
+  const { filters, onFilterChange } = useFilter();
 
   const handleApply = () => {
-    onFilterChange({
-      status: status || undefined,
-      priority: priority || undefined,
-      sort: sortField,
-      order: sortOrder,
-      limit,
-    });
+    // Use filters to call API
+    // Example:
+    // fetchTasks(filters)
+    console.log("Applying filters:", filters);
   };
 
   return (
     <div className="flex flex-wrap gap-4 items-center p-4 theme-surface rounded-2xl shadow-sm transition-theme">
+
       {/* Status */}
       <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}
-        className="rounded-lg theme-border px-3 py-2 text-sm theme-surface theme-text-primary transition-colors"
+        value={filters.status}
+        onChange={(e) => onFilterChange("status", e.target.value)}
+        className="rounded-lg theme-border px-3 py-2 text-sm"
       >
         <option value="">All Status</option>
         <option value="pending">Pending</option>
@@ -37,9 +28,9 @@ export function TaskFilters({ onFilterChange }: Props) {
 
       {/* Priority */}
       <select
-        value={priority}
-        onChange={(e) => setPriority(e.target.value)}
-        className="rounded-lg theme-border px-3 py-2 text-sm theme-surface theme-text-primary transition-colors"
+        value={filters.priority}
+        onChange={(e) => onFilterChange("priority", e.target.value)}
+        className="rounded-lg theme-border px-3 py-2 text-sm"
       >
         <option value="">All Priority</option>
         <option value="low">Low</option>
@@ -49,9 +40,9 @@ export function TaskFilters({ onFilterChange }: Props) {
 
       {/* Sort Field */}
       <select
-        value={sortField}
-        onChange={(e) => setSortField(e.target.value)}
-        className="rounded-lg theme-border px-3 py-2 text-sm theme-surface theme-text-primary transition-colors"
+        value={filters.sortField}
+        onChange={(e) => onFilterChange("sortField", e.target.value)}
+        className="rounded-lg theme-border px-3 py-2 text-sm"
       >
         <option value="dueDate">Due Date</option>
         <option value="priority">Priority</option>
@@ -60,9 +51,11 @@ export function TaskFilters({ onFilterChange }: Props) {
 
       {/* Sort Order */}
       <select
-        value={sortOrder}
-        onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
-        className="rounded-lg theme-border px-3 py-2 text-sm theme-surface theme-text-primary transition-colors"
+        value={filters.sortOrder}
+        onChange={(e) =>
+          onFilterChange("sortOrder", e.target.value as "asc" | "desc")
+        }
+        className="rounded-lg theme-border px-3 py-2 text-sm"
       >
         <option value="asc">Asc</option>
         <option value="desc">Desc</option>
@@ -71,20 +64,20 @@ export function TaskFilters({ onFilterChange }: Props) {
       {/* Limit */}
       <input
         type="number"
-        value={limit}
-        onChange={(e) => setLimit(Number(e.target.value))}
         min={1}
-        className="w-16 rounded-lg theme-border px-3 py-2 text-sm theme-surface theme-text-primary transition-colors"
-        placeholder="Limit"
+        value={filters.limit}
+        onChange={(e) => onFilterChange("limit", Number(e.target.value))}
+        className="w-16 rounded-lg theme-border px-3 py-2 text-sm"
       />
 
-      {/* Apply */}
-      <button
+      <CenterButton
         onClick={handleApply}
-        className="ml-auto rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+        variant="primary"
+        size="sm"
+        className="ml-auto"
       >
         Apply
-      </button>
+      </CenterButton>
     </div>
   );
 }

@@ -81,3 +81,22 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--theme-text-muted);
 }
+
+/* Form elements dark mode support */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+  color-scheme: light dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0);
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

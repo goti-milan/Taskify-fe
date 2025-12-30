@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { loginUser, registerUser, fetchCurrentUser } from '../api/auth.api';
+import { cookies } from '../utils/functions';
 
 interface User {
     id: string;
@@ -12,95 +14,105 @@ interface AuthContextType {
     register: (email: string, password: string, name: string) => Promise<boolean>;
     logout: () => void;
     isLoading: boolean;
+    isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+    return ctx;
 };
 
-interface AuthProviderProps {
-    children: React.ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        // Check for stored user data on app start
-        const storedUser = localStorage.getItem('taskify_user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+    const loadUser = async () => {
+        try {
+            const res = await fetchCurrentUser();
+            if (res?.success) {
+                setUser(res?.data);
+            }
+        } catch {
+            setUser(null);
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
+    };
+
+    // 🔹 LOGIN
+    const login = async (email: string, password: string): Promise<boolean> => {
+        setIsLoading(true);
+        try {
+            const res = await loginUser({ email, password });
+
+            if (res?.success) {
+                const { accessToken, refreshToken } = res.data.token;
+                cookies.set('token', accessToken);
+                cookies.set('refreshToken', refreshToken);
+                await loadUser();
+                return true;
+            }
+            return false;
+        } catch {
+            return false;
+        }
+    };
+
+    // 🔹 REGISTER (same flow)
+    const register = async (
+        email: string,
+        password: string,
+        name: string
+    ): Promise<boolean> => {
+        setIsLoading(true);
+        try {
+            const res = await registerUser({ email, password, name });
+
+            if (res?.success) {
+                const { accessToken, refreshToken } = res.data.token;
+                cookies.set('token', accessToken);
+                cookies.set('refreshToken', refreshToken);
+
+                await loadUser();
+                return true;
+            }
+            return false;
+        } catch {
+            return false;
+        }
+    };
+
+    // 🔹 LOGOUT
+    const logout = () => {
+        cookies.remove('token');
+        cookies.remove('refreshToken');
+        setUser(null);
+    };
+
+    // 🔹 AUTO AUTH ON REFRESH
+    useEffect(() => {
+        const token = cookies.get('token');
+        if (token) {
+            loadUser();
+        } else {
+            setIsLoading(false);
+        }
     }, []);
 
-    const login = async (email: string, _password: string): Promise<boolean> => {
-        setIsLoading(true);
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // For demo purposes, accept any email/password
-            const userData: User = {
-                id: '1',
-                email,
-                name: email.split('@')[0]
-            };
-
-            setUser(userData);
-            localStorage.setItem('taskify_user', JSON.stringify(userData));
-            setIsLoading(false);
-            return true;
-        } catch (error) {
-            setIsLoading(false);
-            return false;
-        }
-    };
-
-    const register = async (email: string, _password: string, name: string): Promise<boolean> => {
-        setIsLoading(true);
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            const userData: User = {
-                id: '1',
-                email,
-                name
-            };
-
-            setUser(userData);
-            localStorage.setItem('taskify_user', JSON.stringify(userData));
-            setIsLoading(false);
-            return true;
-        } catch (error) {
-            setIsLoading(false);
-            return false;
-        }
-    };
-
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem('taskify_user');
-    };
-
-    const value = {
-        user,
-        login,
-        register,
-        logout,
-        isLoading
-    };
-
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext.Provider
+            value={{
+                user,
+                login,
+                register,
+                logout,
+                isLoading,
+                isAuthenticated: !!user,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
