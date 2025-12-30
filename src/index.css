@@ -1,1 +1,83 @@
 @import "tailwindcss";
+
+/* CSS Variables for Centralized Theme System */
+:root {
+  /* Light theme variables (default) */
+  --theme-bg: #ffffff;
+  --theme-surface: #f8fafc;
+  --theme-surface-hover: #f1f5f9;
+  --theme-text-primary: #0f172a;
+  --theme-text-secondary: #475569;
+  --theme-text-muted: #64748b;
+  --theme-border: #e2e8f0;
+  --theme-border-hover: #cbd5e1;
+  --theme-transition: 300ms;
+}
+
+.dark {
+  /* Dark theme variables */
+  --theme-bg: #0f172a;
+  --theme-surface: #1e293b;
+  --theme-surface-hover: #334155;
+  --theme-text-primary: #f8fafc;
+  --theme-text-secondary: #cbd5e1;
+  --theme-text-muted: #94a3b8;
+  --theme-border: #334155;
+  --theme-border-hover: #475569;
+}
+
+/* Base styles using CSS variables */
+* {
+  transition: background-color var(--theme-transition),
+    border-color var(--theme-transition), color var(--theme-transition);
+}
+
+body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text-primary);
+}
+
+/* Utility classes using CSS variables */
+.theme-bg {
+  background-color: var(--theme-bg);
+}
+.theme-surface {
+  background-color: var(--theme-surface);
+}
+.theme-surface-hover:hover {
+  background-color: var(--theme-surface-hover);
+}
+.theme-text-primary {
+  color: var(--theme-text-primary);
+}
+.theme-text-secondary {
+  color: var(--theme-text-secondary);
+}
+.theme-text-muted {
+  color: var(--theme-text-muted);
+}
+.theme-border {
+  border-color: var(--theme-border);
+}
+.theme-border-hover:hover {
+  border-color: var(--theme-border-hover);
+}
+
+/* Modern scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--theme-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--theme-border-hover);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-text-muted);
+}
