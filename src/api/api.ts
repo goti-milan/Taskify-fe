@@ -4,7 +4,7 @@ import {
   handleGlobalError,
 } from "../utils/functions";
 
-export const BASE_URL = import.meta.env.VITE_API_URL || "/api/";
+export const BASE_URL = "taskify-be-production.up.railway.app"
 
 let refreshPromise: Promise<string | null> | null = null;
 
