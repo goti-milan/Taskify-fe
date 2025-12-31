@@ -4,7 +4,7 @@ import {
   handleGlobalError,
 } from "../utils/functions";
 
-export const BASE_URL = "taskify-be-production.up.railway.app"
+export const BASE_URL = "taskify-be-production.up.railway.app/api/"
 
 let refreshPromise: Promise<string | null> | null = null;
 
