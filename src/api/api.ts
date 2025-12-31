@@ -16,6 +16,7 @@ async function refreshToken(): Promise<string | null> {
 
     refreshPromise = fetch(`${BASE_URL}auth/refresh`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -87,6 +88,7 @@ export async function apiFetch<T>(
 
     res = await fetch(url, {
       ...options,
+      credentials: "include",
       headers: {
         ...headers,
         Authorization: `Bearer ${newToken}`,
