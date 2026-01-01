@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { loginUser, registerUser, fetchCurrentUser } from '../api/auth.api';
 import { cookies } from '../utils/functions';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
     id: string;
@@ -29,6 +31,7 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     const loadUser = async () => {
         try {
@@ -75,15 +78,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const res = await registerUser({ email, password, name });
 
             if (res?.success) {
-                const { accessToken, refreshToken } = res.data.token;
-                cookies.set('token', accessToken);
-                cookies.set('refreshToken', refreshToken);
-
-                await loadUser();
+                toast.success(res.message as string);
+                navigate("/login");
                 return true;
             }
+
             return false;
-        } catch {
+        } catch (error: any) {
+            toast.error(
+                error?.response?.data?.message ||
+                error?.message ||
+                "Something went wrong"
+            );
             return false;
         } finally {
             setIsLoading(false);

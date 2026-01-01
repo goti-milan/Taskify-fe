@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
+import { PAGINATION } from '../utils/constant';
 
 export type Filters = {
     status: string;
@@ -27,8 +28,8 @@ const defaultFilters: Filters = {
     priority: '',
     sortField: 'dueDate',
     sortOrder: 'asc',
-    limit: 10,
-    page: 1,
+    limit: PAGINATION?.limit,
+    page: PAGINATION?.page,
     total: 0,
     totalPages: 0,
 };
@@ -61,7 +62,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
                 updates.sortField = 'dueDate';
                 updates.sortOrder = 'asc';
             } else if (filterKey === 'limit') {
-                updates.limit = 10;
+                updates.limit = PAGINATION?.limit;
             } else if (filterKey === 'status' || filterKey === 'priority') {
                 // Reset status or priority to empty strings
                 updates[filterKey] = '';

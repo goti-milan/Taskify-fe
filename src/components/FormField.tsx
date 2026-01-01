@@ -19,6 +19,7 @@ type Props = {
     options?: Option[];
     required?: boolean;
     placeholder?: string;
+    min?: string;
 };
 
 export function FormField({
@@ -31,6 +32,7 @@ export function FormField({
     options = [],
     required,
     placeholder,
+    min
 }: Props) {
     const baseClass =
         "w-full rounded-lg border theme-border theme-surface px-3 py-2 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all";
@@ -73,6 +75,7 @@ export function FormField({
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
+                    min={type === "date" ? min : undefined}
                     className={baseClass}
                 />
             )}

@@ -6,7 +6,8 @@ import { FilterSummary } from '../components/FilterSummary'
 import Pagination from '../components/Pagination'
 import { useTaskModal } from '../context/TaskModalContext'
 import { useFilter } from '../context/FilterContext'
-import { deleteTask, fetchTasks, type Task, type TaskFilters as ApiTaskFilters } from '../api/task.api'
+import { deleteTask, fetchTasks, type Task, type TaskFilters as ApiTaskFilters, updateTask, type TaskStatus } from '../api/task.api'
+import { TaskCardSkeleton } from '../layouts/TaskCardSkeleton'
 
 const TaskBoard: React.FC = () => {
     const { isOpen, openModal, closeModal } = useTaskModal()
@@ -20,8 +21,6 @@ const TaskBoard: React.FC = () => {
         try {
             const res = await fetchTasks(filters)
             if (res?.success) {
-                console.log('res', res);
-
                 setTaskList(res.data as Task[])
                 const { page, limit, total, totalPages } = res.meta;
                 onFilterChange('page', page);
@@ -40,32 +39,38 @@ const TaskBoard: React.FC = () => {
     }, [getAllTasks])
 
     // Handle apply filters
-    const handleApplyFilters = useCallback(() => {
+    useEffect(() => {
         const apiFilters: ApiTaskFilters = {};
 
         if (filterState.status) {
             apiFilters.status = filterState.status as import('../api/task.api').TaskStatus;
         }
+
         if (filterState.priority) {
             apiFilters.priority = filterState.priority as import('../api/task.api').TaskPriority;
         }
+
         if (filterState.sortField && filterState.sortField !== 'priority') {
             apiFilters.sort = filterState.sortField as 'createdAt' | 'dueDate';
         }
+
         if (filterState.sortOrder) {
             apiFilters.order = filterState.sortOrder;
         }
-        if (filterState.limit) {
-            apiFilters.limit = filterState.limit;
-        }
+
+        apiFilters.limit = filterState.limit;
+        apiFilters.page = filterState.page;
 
         getAllTasks(apiFilters);
-    }, [filterState, getAllTasks]);
-
-    // Handle clear filters
-    const handleClearFilters = useCallback(() => {
-        getAllTasks();
-    }, [getAllTasks]);
+    }, [
+        filterState.page,
+        filterState.limit,
+        filterState.status,
+        filterState.priority,
+        filterState.sortField,
+        filterState.sortOrder,
+        getAllTasks,
+    ]);
 
     const handleCreateTask = useCallback(() => {
         openModal("create")
@@ -96,11 +101,17 @@ const TaskBoard: React.FC = () => {
         closeModal()
     }, [closeModal])
 
+    const handleMarkComplete = async (data: string) => {
+        const form = { status: "completed" as TaskStatus }
+        await updateTask(data, form);
+        getAllTasks()
+    }
+
     return (
         <div className="flex flex-col">
             {/* Desktop filters */}
             <div className="hidden md:block mb-4">
-                <TaskFilters onApply={handleApplyFilters} onClear={handleClearFilters} />
+                <TaskFilters />
             </div>
 
             {/* Mobile filter summary */}
@@ -132,9 +143,7 @@ const TaskBoard: React.FC = () => {
 
                 {/* Loading */}
                 {loading && (
-                    <div className="col-span-full text-center theme-text-muted">
-                        Loading tasks...
-                    </div>
+                    <TaskCardSkeleton />
                 )}
 
                 {/* Empty state */}
@@ -145,20 +154,24 @@ const TaskBoard: React.FC = () => {
                 )}
 
                 {/* Task cards */}
-                {taskList.map(task => (
-                    <TaskCard
-                        key={task.id}
-                        task={task}
-                        onEdit={() => handleEditTask(task.id)}
-                        onDelete={() => handleDeleteTask(task.id)}
-                    />
-                ))}
+                {!loading && taskList.length > 0 && (
+                    taskList.map(task => (
+                        <TaskCard
+                            key={task.id}
+                            task={task}
+                            onEdit={() => handleEditTask(task.id)}
+                            onDelete={() => handleDeleteTask(task.id)}
+                            onComplete={() => handleMarkComplete(task?.id)}
+                        />
+                    ))
+                )}
             </div>
 
             {/* Pagination */}
             {(filterState?.total && filterState?.limit < filterState?.total) &&
                 <Pagination
                     totalPages={filterState?.totalPages as number}
+                    currentPage={filterState?.page}
                     onPageChange={(page) => {
                         onFilterChange('page', page);
                     }}

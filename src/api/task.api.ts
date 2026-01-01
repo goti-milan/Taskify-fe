@@ -2,6 +2,7 @@
 /* ---------- Types ---------- */
 
 import { apiFetch } from "./api";
+import { PAGINATION } from "../utils/constant";
 
 export type TaskStatus = 'pending' | 'in_progress' | 'completed';
 export type TaskPriority = 'low' | 'medium' | 'high';
@@ -48,8 +49,10 @@ export interface TaskFilters {
 /* ---------- API Calls ---------- */
 
 // GET /tasks
-export const fetchTasks = (filters?: TaskFilters) =>
-  apiFetch<TaskListResponse>('tasks', { method: 'GET' }, filters);
+export const fetchTasks = (filters?: TaskFilters) => {
+  const defaultFilters = { limit: PAGINATION.limit, ...filters };
+  return apiFetch<TaskListResponse>('tasks', { method: 'GET' }, defaultFilters);
+};
 
 // GET /tasks/:id
 export const  fetchTaskById = (id: string) =>

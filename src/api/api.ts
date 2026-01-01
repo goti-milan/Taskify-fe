@@ -96,9 +96,9 @@ export async function apiFetch<T>(
 
   const data = await res.json();
 
-  if (!res.ok || data?.success === false) {
+  if (!res.ok || data?.success === false) {        
     const error = handleGlobalError(
-      new Error(data?.error || "Something went wrong"),
+      new Error(data?.error.message || "Something went wrong"),
       "apiFetch"
     );
     throw error;

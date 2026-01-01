@@ -3,6 +3,7 @@ import { Modal } from "./Modal";
 import CenterButton from "./CenterButton";
 import { FormField } from "./FormField";
 import { createTask, fetchTaskById, updateTask, type TaskPriority, type TaskStatus } from "../api/task.api";
+import toast from "react-hot-toast";
 
 const EMPTY_FORM = {
     title: "",
@@ -38,13 +39,15 @@ function validateForm(form: FormData): ValidationErrors {
     return errors;
 }
 
-export function     CreateTaskForm({ open, data, close, onSubmit }: any) {
+export function CreateTaskForm({ open, data, close, onSubmit }: any) {
     const isEdit = data !== "create";
 
     const [form, setForm] = useState<FormData>(EMPTY_FORM);
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     useEffect(() => {
         if (!open) return;
@@ -91,17 +94,30 @@ export function     CreateTaskForm({ open, data, close, onSubmit }: any) {
         }
 
         setSubmitting(true);
+
         try {
-            isEdit
-                ? await updateTask(data, form)
-                : await createTask(form);
+            if (isEdit) {
+                await updateTask(data, form);
+                toast.success("Task updated successfully");
+            } else {
+                await createTask(form);
+                toast.success("Task created successfully");
+            }
 
             onSubmit(form);
             close();
+
+        } catch (error: any) {
+            toast.error(
+                error?.response?.data?.message ||
+                error?.message ||
+                "Something went wrong"
+            );
         } finally {
             setSubmitting(false);
         }
     };
+
 
     return (
         <Modal open={open} onClose={close} title={isEdit ? "Edit Task" : "Create Task"}>
@@ -164,6 +180,7 @@ export function     CreateTaskForm({ open, data, close, onSubmit }: any) {
                         type="date"
                         value={form.dueDate}
                         onChange={handleChange}
+                        min={tomorrow.toISOString().split("T")[0]}
                     />
 
                     <div className="flex justify-end gap-3 pt-4 border-t theme-border">

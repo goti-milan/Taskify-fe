@@ -1,5 +1,6 @@
 import { useFilter } from '../context/FilterContext';
 import type { Filters } from '../context/FilterContext';
+import { PAGINATION } from '../utils/constant';
 
 export function FilterSummary() {
     const { filters, clearAllFilters, removeFilter } = useFilter();
@@ -30,7 +31,7 @@ export function FilterSummary() {
 
 
     // Don't show anything if no filters are active
-    const hasActiveFilters = status || priority || sortField !== 'dueDate' || sortOrder !== 'asc' || limit !== 10;
+    const hasActiveFilters = status || priority || sortField !== 'dueDate' || sortOrder !== 'asc' || limit !== PAGINATION?.limit;
 
     if (!hasActiveFilters) {
         return null;
@@ -50,7 +51,7 @@ export function FilterSummary() {
             label: `${getFilterDisplayName('sortField', sortField)} (${sortOrder})`,
             value: `${sortField}-${sortOrder}`
         }] : []),
-        ...(limit !== 10 ? [{ key: 'limit' as const, label: `Limit: ${limit}`, value: limit.toString() }] : [])
+        ...(limit !== PAGINATION?.limit ? [{ key: 'limit' as const, label: `Limit: ${limit}`, value: limit.toString() }] : [])
     ];
 
     return (

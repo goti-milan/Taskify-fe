@@ -25,7 +25,6 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
 
     const handleProfileClick = () => {
         // TODO: Implement profile menu functionality
-        console.log('Profile clicked');
     };
 
     const toggleSidebar = () => {

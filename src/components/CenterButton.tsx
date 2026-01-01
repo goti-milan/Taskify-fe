@@ -23,7 +23,7 @@ const CenterButton: React.FC<CenterButtonProps> = ({
     const baseClasses = 'flex items-center justify-center font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed';
 
     const variantClasses = {
-        primary: 'bg-primary-600 hover:bg-primary-700 text-white',
+        primary: 'bg-primary-600 hover:bg-primary-700 bg-blue-500! text-white',
         secondary: 'theme-surface theme-text-primary hover:theme-surface-hover',
         outline: 'theme-border theme-text-primary hover:theme-surface-hover',
         ghost: 'theme-text-primary hover:theme-surface-hover'

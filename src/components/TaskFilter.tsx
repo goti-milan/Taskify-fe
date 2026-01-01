@@ -1,4 +1,3 @@
-import CenterButton from "./CenterButton";
 import { useFilter } from "../context/FilterContext";
 import type { Filters } from "../context/FilterContext";
 
@@ -8,22 +7,9 @@ interface TaskFiltersProps {
   onFilterChange?: <K extends keyof Filters>(name: K, value: Filters[K]) => void;
 }
 
-export function TaskFilters({ onApply, onClear, onFilterChange }: TaskFiltersProps) {
-  const { filters: contextFilters, onFilterChange: contextOnFilterChange, clearAllFilters } = useFilter();
+export function TaskFilters({ onFilterChange }: TaskFiltersProps) {
+  const { filters: contextFilters, onFilterChange: contextOnFilterChange } = useFilter();
   const handleFilterChange = onFilterChange || contextOnFilterChange;
-
-  const handleApply = () => {
-    if (onApply) {
-      onApply(contextFilters);
-    }
-  };
-
-  const handleClear = () => {
-    clearAllFilters();
-    if (onClear) {
-      onClear();
-    }
-  };
 
   return (
     <div className="flex flex-wrap gap-4 items-center p-4 theme-surface rounded-2xl shadow-sm transition-theme">
@@ -32,7 +18,14 @@ export function TaskFilters({ onApply, onClear, onFilterChange }: TaskFiltersPro
       <select
         value={contextFilters.status}
         onChange={(e) => handleFilterChange("status", e.target.value)}
-        className="rounded-lg theme-border px-3 py-2 text-sm"
+        className="
+    rounded-lg
+    px-3 py-2 text-sm
+    theme-border
+    bg-white text-gray-900
+    dark:bg-gray-800 dark:text-gray-100
+    focus:outline-none focus:ring-2 focus:ring-primary
+  "
       >
         <option value="">All Status</option>
         <option value="pending">Pending</option>
@@ -44,7 +37,14 @@ export function TaskFilters({ onApply, onClear, onFilterChange }: TaskFiltersPro
       <select
         value={contextFilters.priority}
         onChange={(e) => handleFilterChange("priority", e.target.value)}
-        className="rounded-lg theme-border px-3 py-2 text-sm"
+        className="
+    rounded-lg
+    px-3 py-2 text-sm
+    theme-border
+    bg-white text-gray-900
+    dark:bg-gray-800 dark:text-gray-100
+    focus:outline-none focus:ring-2 focus:ring-primary
+  "
       >
         <option value="">All Priority</option>
         <option value="low">Low</option>
@@ -56,7 +56,14 @@ export function TaskFilters({ onApply, onClear, onFilterChange }: TaskFiltersPro
       <select
         value={contextFilters.sortField}
         onChange={(e) => handleFilterChange("sortField", e.target.value)}
-        className="rounded-lg theme-border px-3 py-2 text-sm"
+        className="
+    rounded-lg
+    px-3 py-2 text-sm
+    theme-border
+    bg-white text-gray-900
+    dark:bg-gray-800 dark:text-gray-100
+    focus:outline-none focus:ring-2 focus:ring-primary
+  "
       >
         <option value="dueDate">Due Date</option>
         <option value="priority">Priority</option>
@@ -69,7 +76,14 @@ export function TaskFilters({ onApply, onClear, onFilterChange }: TaskFiltersPro
         onChange={(e) =>
           handleFilterChange("sortOrder", e.target.value as "asc" | "desc")
         }
-        className="rounded-lg theme-border px-3 py-2 text-sm"
+        className="
+    rounded-lg
+    px-3 py-2 text-sm
+    theme-border
+    bg-white text-gray-900
+    dark:bg-gray-800 dark:text-gray-100
+    focus:outline-none focus:ring-2 focus:ring-primary
+  "
       >
         <option value="asc">Asc</option>
         <option value="desc">Desc</option>
@@ -81,24 +95,16 @@ export function TaskFilters({ onApply, onClear, onFilterChange }: TaskFiltersPro
         min={1}
         value={contextFilters.limit}
         onChange={(e) => handleFilterChange("limit", Number(e.target.value))}
-        className="w-16 rounded-lg theme-border px-3 py-2 text-sm"
+        className="
+    w-16
+    rounded-lg
+    px-3 py-2 text-sm
+    theme-border
+    bg-white text-gray-900
+    dark:bg-gray-800 dark:text-gray-100
+    focus:outline-none focus:ring-2 focus:ring-primary
+  "
       />
-
-      <CenterButton
-        onClick={handleClear}
-        variant="secondary"
-        size="sm"
-      >
-        Clear
-      </CenterButton>
-
-      <CenterButton
-        onClick={handleApply}
-        variant="primary"
-        size="sm"
-      >
-        Apply
-      </CenterButton>
     </div>
   );
 }

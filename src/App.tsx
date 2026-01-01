@@ -11,44 +11,45 @@ import { FilterProvider } from './context/FilterContext';
 import TaskBoard from './pages/Tasks';
 import MobileLayout from './layouts/MobileLayout';
 import Layout from './layouts/Layout';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
-    <AuthProvider>
-      <ThemeProvider>
-        <TaskModalProvider>
-          <FilterProvider>
-            <Router>
+    <Router>
+      <AuthProvider>
+        <ThemeProvider>
+          <TaskModalProvider>
+            <FilterProvider>
               <div className="App">
+                <Toaster />
                 <Routes>
                   {/* Public Routes */}
-                  <Route path="/" element={<Home />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
+                  <Route path="/" element={<Home />} />
 
-                  {/* Protected Routes with responsive layout */}
+                  {/* Protected Routes */}
                   <Route
                     path="/tasks"
                     element={
-                      // <ProtectedRoute>
                       <ResponsiveLayout>
                         <TaskBoard />
                       </ResponsiveLayout>
-                      // </ProtectedRoute>
                     }
                   />
 
-                  {/* Redirect unknown routes to home */}
+                  {/* Fallback */}
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </div>
-            </Router>
-          </FilterProvider>
-        </TaskModalProvider>
-      </ThemeProvider>
-    </AuthProvider>
+            </FilterProvider>
+          </TaskModalProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </Router>
   );
 }
+
 
 // Responsive layout component that switches between mobile and desktop layouts
 const ResponsiveLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {

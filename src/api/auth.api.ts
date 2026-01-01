@@ -20,6 +20,7 @@ export interface User {
 
 export interface AuthResponse {
   success: boolean;
+  message?: string;
   data: {
     token: {
       accessToken: string;
